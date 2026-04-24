@@ -1,0 +1,20 @@
+## macOS では Apple Clang が `-fuse-ld=lld` をサポートしないため、
+## Linux ターゲットのみに限定して lld を使用する。
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = [
+    "-C", "link-arg=-fuse-ld=lld",
+    "-C", "link-arg=-Wl,--threads=4"
+]
+
+[target.aarch64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[build]
+jobs = 4
+
+[profile.dev]
+codegen-units = 2
+
+[profile.release]
+codegen-units = 2

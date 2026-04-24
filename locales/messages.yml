@@ -1,0 +1,27 @@
+_version: 2
+# ================================
+# ユーザー向けメッセージ定義
+# ================================
+# 形式:
+#   message_id:
+#     en: "English text"
+#     ja: "日本語テキスト"
+#
+# 変数の使い方:
+#   message_id:
+#     en: "Hello, {{name}}!"
+#     ja: "こんにちは、{{name}}！"
+#
+# コード内での使い方:
+#   use crate::services::message::MessageService;
+#   let text = message_service.get("message_id", &[("name", "World")]);
+# ================================
+
+# サンプルメッセージ
+ping.response:
+  en: "Pong! 🏓"
+  ja: "ポン！ 🏓"
+
+ping.response_with_latency:
+  en: "Pong! 🏓 Latency: {{latency}}ms"
+  ja: "ポン！ 🏓 レイテンシ: {{latency}}ms"

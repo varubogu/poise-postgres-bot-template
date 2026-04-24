@@ -1,0 +1,57 @@
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  app:
+    # 本番用：ビルド済みイメージをGHCRからpull
+    # 「GITHUB_REPOSITORY」は「username/repositoryname」形式
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-username/discord_bot}:latest
+
+    # 検証用：ローカルビルドする場合は上記をコメントアウトして以下を有効化
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.app
+    restart: always
+    env_file:
+      - .env.app
+    environment:
+      DB_HOST: db
+      TZ: UTC
+    networks:
+      - app_network
+    depends_on:
+      db:
+        condition: service_healthy
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  db:
+    # DBイメージもGHCRからpull
+    image: ghcr.io/${GITHUB_REPOSITORY:-your-username/discord_bot}-db:latest
+
+    # 検証用：ローカルビルドする場合は上記をコメントアウトして以下を有効化
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.db
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql
+    env_file:
+      - .env.db
+    networks:
+      - app_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  pgdata:
